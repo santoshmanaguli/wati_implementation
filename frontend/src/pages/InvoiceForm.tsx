@@ -69,16 +69,16 @@ export default function InvoiceForm() {
 
   return (
     <div className="px-4 py-6 max-w-4xl">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Create Invoice</h1>
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6">Create Invoice</h1>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Customer *</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Customer *</label>
           <select
             required
             value={formData.customerId}
             onChange={(e) => setFormData({ ...formData, customerId: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="">Select a customer</option>
             {customers.map((customer) => (
@@ -91,11 +91,11 @@ export default function InvoiceForm() {
 
         <div className="mb-6">
           <div className="flex justify-between items-center mb-4">
-            <label className="block text-sm font-medium text-gray-700">Items *</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Items *</label>
             <button
               type="button"
               onClick={addItem}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm"
+              className="bg-green-600 dark:bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-700 dark:hover:bg-green-600 text-sm"
             >
               Add Item
             </button>
@@ -105,7 +105,7 @@ export default function InvoiceForm() {
             {formData.items.map((item, index) => (
               <div key={index} className="flex gap-4 items-end">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Description
                   </label>
                   <input
@@ -113,22 +113,22 @@ export default function InvoiceForm() {
                     required
                     value={item.description}
                     onChange={(e) => handleItemChange(index, 'description', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div className="w-24">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quantity</label>
                   <input
                     type="number"
                     required
                     min="1"
                     value={item.quantity}
                     onChange={(e) => handleItemChange(index, 'quantity', parseInt(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div className="w-32">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Price</label>
                   <input
                     type="number"
                     required
@@ -136,12 +136,12 @@ export default function InvoiceForm() {
                     step="0.01"
                     value={item.price}
                     onChange={(e) => handleItemChange(index, 'price', parseFloat(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div className="w-32">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Total</label>
-                  <div className="px-3 py-2 bg-gray-50 rounded-lg">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Total</label>
+                  <div className="px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg text-gray-900 dark:text-gray-100">
                     ₹{(item.quantity * item.price).toFixed(2)}
                   </div>
                 </div>
@@ -149,7 +149,7 @@ export default function InvoiceForm() {
                   <button
                     type="button"
                     onClick={() => removeItem(index)}
-                    className="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700"
+                    className="bg-red-600 dark:bg-red-500 text-white px-3 py-2 rounded-lg hover:bg-red-700 dark:hover:bg-red-600"
                   >
                     Remove
                   </button>
@@ -159,10 +159,10 @@ export default function InvoiceForm() {
           </div>
         </div>
 
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+        <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
           <div className="flex justify-between items-center">
-            <span className="text-lg font-semibold text-gray-900">Total Amount:</span>
-            <span className="text-2xl font-bold text-gray-900">₹{totalAmount.toFixed(2)}</span>
+            <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">Total Amount:</span>
+            <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">₹{totalAmount.toFixed(2)}</span>
           </div>
         </div>
 
@@ -170,14 +170,14 @@ export default function InvoiceForm() {
           <button
             type="submit"
             disabled={loading || !formData.customerId}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            className="bg-blue-600 dark:bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-50"
           >
             {loading ? 'Creating...' : 'Create Invoice & Send WhatsApp'}
           </button>
           <button
             type="button"
             onClick={() => navigate('/invoices')}
-            className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300"
+            className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
           >
             Cancel
           </button>
