@@ -9,11 +9,11 @@ COPY prisma ./prisma/
 # Install dependencies
 RUN npm ci
 
-# Copy source code
-COPY . .
-
 # Generate Prisma Client
 RUN npx prisma generate
+
+# Copy source code
+COPY . .
 
 # Build TypeScript
 RUN npm run build
@@ -21,6 +21,6 @@ RUN npm run build
 # Expose port
 EXPOSE 3000
 
-# Start server
-CMD ["npm", "start"]
+# Run migrations and start server
+CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
 
