@@ -2,19 +2,19 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Install dependencies first (for better caching)
-COPY package*.json ./
-RUN npm ci --only=production=false
+# Copy package files
+COPY backend/package*.json ./
+COPY backend/prisma ./prisma/
 
-# Copy Prisma schema
-COPY prisma ./prisma/
+# Install dependencies
+RUN npm ci --only=production=false
 
 # Generate Prisma Client
 RUN npx prisma generate
 
 # Copy TypeScript config and source code
-COPY tsconfig.json ./
-COPY src ./src/
+COPY backend/tsconfig.json ./
+COPY backend/src ./src/
 
 # Build TypeScript
 RUN npm run build
