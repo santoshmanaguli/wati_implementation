@@ -22,7 +22,7 @@ function App() {
                     to="/"
                     className="flex items-center px-4 text-xl font-bold text-blue-600 dark:text-blue-400"
                   >
-                    WATI Invoice System
+                    Invoice Management System
                   </Link>
                   <div className="flex space-x-4 ml-8">
                     <Link

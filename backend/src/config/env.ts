@@ -9,12 +9,6 @@ const envSchema = z.object({
   DATABASE_URL: z.string(),
   BASE_URL: z.string().url().optional(),
   FRONTEND_URL: z.string().url().optional(),
-  WATI_API_ENDPOINT: z.string().url(),
-  WATI_API_TOKEN: z.string().min(1),
-  WATI_WHATSAPP_NUMBER: z.string().min(1),
-  WATI_CHANNEL_PHONE_NUMBER: z.string().optional(),
-  WATI_INVOICE_TEMPLATE_NAME: z.string().optional(),
-  WATI_TEST_PDF_URL: z.string().url().optional(),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

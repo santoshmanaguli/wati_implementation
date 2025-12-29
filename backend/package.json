@@ -1,7 +1,7 @@
 {
-  "name": "wati-backend",
+  "name": "invoice-backend",
   "version": "1.0.0",
-  "description": "Backend API for WATI integration with invoice management",
+  "description": "Backend API for invoice management with public URL sharing",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -14,9 +14,9 @@
     "postinstall": "prisma generate"
   },
   "keywords": [
-    "wati",
-    "whatsapp",
-    "invoice"
+    "invoice",
+    "invoice-management",
+    "pdf-generation"
   ],
   "author": "",
   "license": "ISC",
