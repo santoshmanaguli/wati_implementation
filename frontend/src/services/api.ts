@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -31,15 +31,11 @@ export interface Invoice {
   totalAmount: number;
   status: string;
   pdfPath?: string;
+  publicToken?: string;
+  publicUrl?: string;
+  pdfUrl?: string;
   items: InvoiceItem[];
   createdAt: string;
-  watiMessages?: Array<{
-    id: string;
-    status: string;
-    sentAt?: string;
-    deliveredAt?: string;
-    error?: string;
-  }>;
 }
 
 export const customerApi = {

@@ -6,6 +6,7 @@ import CustomerForm from './pages/CustomerForm';
 import Invoices from './pages/Invoices';
 import InvoiceForm from './pages/InvoiceForm';
 import InvoiceDetail from './pages/InvoiceDetail';
+import PublicInvoiceView from './pages/PublicInvoiceView';
 import Dashboard from './pages/Dashboard';
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
 
           <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
             <Routes>
+              <Route path="/public/invoices/:token" element={<PublicInvoiceView />} />
               <Route path="/" element={<Dashboard />} />
               <Route path="/customers" element={<Customers />} />
               <Route path="/customers/new" element={<CustomerForm />} />
