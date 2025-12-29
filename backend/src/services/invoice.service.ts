@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import { watiService } from './wati.service';
 import path from 'path';
 import fs from 'fs';
 import PDFDocument from 'pdfkit';
+import crypto from 'crypto';
 
 const prisma = new PrismaClient();
 
@@ -23,12 +23,14 @@ export class InvoiceService {
     );
 
     const invoiceNumber = `INV-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    const publicToken = crypto.randomBytes(32).toString('hex');
 
     const invoice = await prisma.invoice.create({
       data: {
         invoiceNumber,
         customerId: input.customerId,
         totalAmount,
+        publicToken,
         items: {
           create: input.items,
         },
@@ -47,42 +49,16 @@ export class InvoiceService {
     });
 
     const port = process.env.PORT || '3000';
-    const baseUrl = process.env.BASE_URL || `http://localhost:${port}`;
-    const testPdfUrl = process.env.WATI_TEST_PDF_URL;
-    const pdfUrl = testPdfUrl || `${baseUrl}/api/invoices/${invoice.id}/pdf`;
-    
-    if (baseUrl.includes('localhost') && !testPdfUrl) {
-      console.warn('WARNING: Using localhost URL. WATI cannot access localhost URLs. Set WATI_TEST_PDF_URL in .env or use ngrok for public URL.');
-    }
-    
-    const watiMessage = await watiService.sendInvoiceNotification(
-      invoice.customer.whatsappNumber,
-      {
-        invoiceNumber: invoice.invoiceNumber,
-        customerName: invoice.customer.name,
-        totalAmount: invoice.totalAmount,
-        pdfUrl,
-      }
-    );
-
-    await prisma.wATIMessage.create({
-      data: {
-        invoiceId: invoice.id,
-        messageId: watiMessage.messageId || undefined,
-        status: watiMessage.result ? 'sent' : 'failed',
-        sentAt: watiMessage.result ? new Date() : undefined,
-        error: watiMessage.error || undefined,
-      },
-    });
+    const frontendUrl = process.env.FRONTEND_URL || `http://localhost:5173`;
+    const backendUrl = process.env.BASE_URL || `http://localhost:${port}`;
+    const publicUrl = `${frontendUrl}/public/invoices/${publicToken}`;
+    const pdfUrl = `${backendUrl}/api/invoices/${invoice.id}/pdf`;
 
     return {
       ...invoice,
       pdfPath,
-      messageStatus: {
-        sent: watiMessage.result,
-        messageId: watiMessage.messageId,
-        error: watiMessage.error,
-      },
+      publicUrl,
+      pdfUrl,
     };
   }
 
@@ -92,10 +68,16 @@ export class InvoiceService {
       include: {
         customer: true,
         items: true,
-        watiMessages: {
-          orderBy: { createdAt: 'desc' },
-          take: 1,
-        },
+      },
+    });
+  }
+
+  async getInvoiceByPublicToken(publicToken: string) {
+    return prisma.invoice.findUnique({
+      where: { publicToken },
+      include: {
+        customer: true,
+        items: true,
       },
     });
   }
@@ -105,10 +87,6 @@ export class InvoiceService {
       include: {
         customer: true,
         items: true,
-        watiMessages: {
-          orderBy: { createdAt: 'desc' },
-          take: 1,
-        },
       },
       orderBy: { createdAt: 'desc' },
     });

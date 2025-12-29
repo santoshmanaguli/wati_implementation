@@ -8,6 +8,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   DATABASE_URL: z.string(),
   BASE_URL: z.string().url().optional(),
+  FRONTEND_URL: z.string().url().optional(),
   WATI_API_ENDPOINT: z.string().url(),
   WATI_API_TOKEN: z.string().min(1),
   WATI_WHATSAPP_NUMBER: z.string().min(1),
