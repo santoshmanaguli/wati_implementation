@@ -3,8 +3,8 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy package files
-COPY backend/package*.json ./
-COPY backend/prisma ./prisma/
+COPY package*.json ./
+COPY prisma ./prisma/
 
 # Install dependencies
 RUN npm ci --only=production=false
@@ -13,8 +13,8 @@ RUN npm ci --only=production=false
 RUN npx prisma generate
 
 # Copy TypeScript config and source code
-COPY backend/tsconfig.json ./
-COPY backend/src ./src/
+COPY tsconfig.json ./
+COPY src ./src/
 
 # Build TypeScript
 RUN npm run build
@@ -28,4 +28,3 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 
 # Run migrations and start server
 CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
-
