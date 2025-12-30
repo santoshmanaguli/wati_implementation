@@ -112,10 +112,8 @@ const invoiceController = {
       const backendUrl = process.env.BASE_URL || `http://localhost:${port}`;
       const pdfUrl = `${backendUrl}/api/invoices/${invoice.id}/pdf`;
 
-      res.json({
-        ...invoice,
-        pdfUrl,
-      });
+      // Redirect to PDF instead of returning JSON
+      res.redirect(pdfUrl);
     } catch (error) {
       res.status(500).json({ error: 'Failed to get invoice' });
     }
