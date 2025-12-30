@@ -41,9 +41,9 @@ const invoiceController = {
       }
 
       const port = process.env.PORT || '3000';
-      const frontendUrl = process.env.FRONTEND_URL || `http://localhost:5173`;
       const backendUrl = process.env.BASE_URL || `http://localhost:${port}`;
-      const publicUrl = invoice.publicToken ? `${frontendUrl}/public/invoices/${invoice.publicToken}` : null;
+      // Public URL points to backend API endpoint (works without frontend)
+      const publicUrl = invoice.publicToken ? `${backendUrl}/api/public/invoices/${invoice.publicToken}` : null;
       const pdfUrl = `${backendUrl}/api/invoices/${invoice.id}/pdf`;
 
       res.json({
@@ -60,12 +60,12 @@ const invoiceController = {
     try {
       const invoices = await invoiceService.listInvoices();
       const port = process.env.PORT || '3000';
-      const frontendUrl = process.env.FRONTEND_URL || `http://localhost:5173`;
       const backendUrl = process.env.BASE_URL || `http://localhost:${port}`;
       
       const invoicesWithUrls = invoices.map((invoice) => ({
         ...invoice,
-        publicUrl: invoice.publicToken ? `${frontendUrl}/public/invoices/${invoice.publicToken}` : null,
+        // Public URL points to backend API endpoint (works without frontend)
+        publicUrl: invoice.publicToken ? `${backendUrl}/api/public/invoices/${invoice.publicToken}` : null,
         pdfUrl: `${backendUrl}/api/invoices/${invoice.id}/pdf`,
       }));
 

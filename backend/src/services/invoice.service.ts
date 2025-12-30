@@ -49,9 +49,9 @@ export class InvoiceService {
     });
 
     const port = process.env.PORT || '3000';
-    const frontendUrl = process.env.FRONTEND_URL || `http://localhost:5173`;
     const backendUrl = process.env.BASE_URL || `http://localhost:${port}`;
-    const publicUrl = `${frontendUrl}/public/invoices/${publicToken}`;
+    // Public URL points to backend API endpoint (works without frontend)
+    const publicUrl = `${backendUrl}/api/public/invoices/${publicToken}`;
     const pdfUrl = `${backendUrl}/api/invoices/${invoice.id}/pdf`;
 
     return {

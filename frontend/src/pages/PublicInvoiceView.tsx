@@ -17,7 +17,7 @@ export default function PublicInvoiceView() {
 
   const fetchInvoice = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || '/api';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://watiimplementation-production.up.railway.app/api';
       const response = await axios.get(`${apiUrl}/public/invoices/${token}`);
       setInvoice(response.data);
     } catch (err: any) {
