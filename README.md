@@ -179,19 +179,65 @@ npm run build      # Build for production
 - `BASE_URL` - Backend base URL
 - `FRONTEND_URL` - Frontend base URL (for public invoice links)
 
-## Deployment
+## DevOps & CI/CD
 
-### Railway Deployment
+### CI/CD Pipeline
+
+This project includes automated CI/CD pipelines using GitHub Actions:
+
+- **CI Pipeline** (`.github/workflows/ci-cd.yml`): Runs on every push/PR
+  - Builds backend and frontend
+  - Runs tests
+  - Lints code
+  
+- **CD Pipeline** (`.github/workflows/deploy-railway.yml`): Auto-deploys to Railway on main branch
+
+- **Security Scanning** (`.github/workflows/security.yml`): Automated security checks
+  - Dependency vulnerability scanning
+  - CodeQL analysis
+  - Docker image scanning
+
+- **Test Automation** (`.github/workflows/test.yml`): Automated testing with coverage
+
+- **Dependabot** (`.github/dependabot.yml`): Auto-updates dependencies
+
+### Docker & Containerization
+
+- **Docker Compose** (`docker-compose.yml`): Local development environment
+  ```bash
+  docker-compose up          # Start all services
+  docker-compose down        # Stop all services
+  ```
+
+- **Dockerfile**: Production-ready containerization
+- **Health Endpoints**: `/health`, `/ready`, `/metrics` for monitoring
+
+### Deployment
+
+#### Railway Deployment
 
 1. Push code to GitHub
 2. Create Railway project and deploy from GitHub
 3. Set Root Directory to `backend`
 4. Set Builder to `Dockerfile`
 5. Add PostgreSQL database
-6. Configure environment variables
-7. Deploy frontend separately (Vercel recommended)
+6. Configure environment variables:
+   - `DATABASE_URL` (from PostgreSQL service)
+   - `BASE_URL` (Railway provides this)
+   - `FRONTEND_URL` (your frontend URL)
+7. Add `RAILWAY_TOKEN` to GitHub Secrets for auto-deployment
 
-See deployment files in the project for detailed instructions.
+#### Stopping Railway Services
+
+- **Backend**: Railway Dashboard → Service → Settings → Delete Service
+- **Database**: Railway Dashboard → PostgreSQL → Settings → Delete Service
+- **Note**: Deleting services removes all data
+
+### Monitoring
+
+- Health check: `GET /health`
+- Readiness check: `GET /ready` (for Kubernetes)
+- Metrics: `GET /metrics` (system metrics)
 
 ## Troubleshooting
 

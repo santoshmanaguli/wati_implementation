@@ -16,8 +16,53 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development',
+  });
+});
+
+// Readiness check (for Kubernetes/Docker)
+app.get('/ready', async (req, res) => {
+  try {
+    // Check database connection
+    const { PrismaClient } = await import('@prisma/client');
+    const prisma = new PrismaClient();
+    await prisma.$queryRaw`SELECT 1`;
+    await prisma.$disconnect();
+    
+    res.json({ 
+      status: 'ready',
+      database: 'connected',
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    res.status(503).json({ 
+      status: 'not ready',
+      database: 'disconnected',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
+// Metrics endpoint (for monitoring)
+app.get('/metrics', (req, res) => {
+  const memoryUsage = process.memoryUsage();
+  res.json({
+    memory: {
+      heapUsed: Math.round(memoryUsage.heapUsed / 1024 / 1024) + ' MB',
+      heapTotal: Math.round(memoryUsage.heapTotal / 1024 / 1024) + ' MB',
+      rss: Math.round(memoryUsage.rss / 1024 / 1024) + ' MB',
+    },
+    uptime: Math.round(process.uptime()) + ' seconds',
+    nodeVersion: process.version,
+    platform: process.platform,
+    timestamp: new Date().toISOString(),
+  });
 });
 
 app.use('/api/public', publicRoutes);
