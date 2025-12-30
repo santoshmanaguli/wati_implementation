@@ -1,37 +1,36 @@
-# WATI Integration - Invoice Management System
+# Invoice Management System
 
-A full-stack application that integrates with WATI (WhatsApp API) to automatically send WhatsApp template messages to customers when invoices are generated.
+A full-stack invoice management application with public URL sharing for customers.
 
 ## Features
 
 - Customer Management (CRUD operations)
 - Invoice Generation with PDF export
-- Automatic WhatsApp notifications via WATI API
-- Message delivery status tracking
-- Modern React frontend with Tailwind CSS
+- Public invoice URLs for easy sharing
+- PDF download functionality
+- Modern React frontend with Tailwind CSS and dark mode
 - RESTful API backend with Express.js
-- Type-safe database with Prisma ORM
+- Type-safe database with Prisma ORM (PostgreSQL)
 
 ## Technology Stack
 
 ### Backend
 - Node.js with Express.js
 - TypeScript
-- Prisma ORM with SQLite
+- Prisma ORM with PostgreSQL
 - PDFKit for invoice PDF generation
-- Axios for WATI API integration
 
 ### Frontend
 - React with TypeScript
 - Vite
-- Tailwind CSS
+- Tailwind CSS with dark mode
 - React Router
 
 ## Prerequisites
 
 - Node.js (v18 or higher)
 - npm or yarn
-- WATI API account and credentials
+- PostgreSQL database (for production)
 
 ## Setup Instructions
 
@@ -49,12 +48,7 @@ PORT=3000
 NODE_ENV=development
 DATABASE_URL="file:./dev.db"
 BASE_URL=http://localhost:3000
-WATI_API_ENDPOINT=https://live-mt-server.wati.io/472997/api/v1
-WATI_API_TOKEN=your_api_token_here
-WATI_WHATSAPP_NUMBER=your_whatsapp_number
-WATI_CHANNEL_PHONE_NUMBER=your_channel_phone_number
-WATI_INVOICE_TEMPLATE_NAME=invoice_notification
-WATI_TEST_PDF_URL=https://example.com/test.pdf
+FRONTEND_URL=http://localhost:5173
 ```
 
 Initialize the database:
@@ -84,42 +78,14 @@ npm run dev
 
 The frontend will run on `http://localhost:5173`
 
-### 3. WATI Configuration
+### 3. Database Setup
 
-1. Sign up for a WATI account at [https://wati.io](https://wati.io)
-2. Get your API token from the WATI dashboard
-3. Configure your WhatsApp Business number
-4. Create a template message in WATI dashboard (see Template Setup below)
-5. Update the `.env` file with your credentials
+For development (SQLite):
+- The database file will be created automatically at `backend/prisma/dev.db`
 
-## Template Setup
-
-Create a template message in WATI dashboard with the following structure:
-
-**Template Name:** `invoice_notification`
-
-**Header (Document):**
-- Type: Document
-- Variable: `{{url}}` (for PDF URL)
-
-**Body:**
-```
-Hello {{name}}!
-
-Your invoice has been generated:
-Invoice Number: {{invoice}}
-Total Amount: {{amount}}
-
-Thank you for your business!
-```
-
-**Parameters:**
-- `{{url}}` - PDF URL (for header/document)
-- `{{name}}` - Customer Name
-- `{{invoice}}` - Invoice Number
-- `{{amount}}` - Total Amount
-
-After creating the template, submit it for approval. Once approved, update `WATI_INVOICE_TEMPLATE_NAME` in your `.env` file.
+For production (PostgreSQL):
+- Update `backend/prisma/schema.prisma` to use `postgresql` provider
+- Set `DATABASE_URL` to your PostgreSQL connection string
 
 ## Project Structure
 
@@ -140,6 +106,8 @@ wati_implementation/
 │   ├── src/
 │   │   ├── pages/          # React pages
 │   │   ├── services/       # API client
+│   │   ├── contexts/       # React contexts (theme)
+│   │   ├── components/     # React components
 │   │   └── App.tsx
 │   └── package.json
 └── README.md
@@ -158,14 +126,10 @@ wati_implementation/
 - `GET /api/invoices` - List all invoices
 - `GET /api/invoices/:id` - Get invoice details
 - `GET /api/invoices/:id/pdf` - Download invoice PDF
-- `POST /api/invoices` - Create invoice (triggers WhatsApp)
+- `POST /api/invoices` - Create invoice
 
-### WATI
-- `POST /api/wati/webhook` - Receive delivery status updates
-
-### Test
-- `GET /api/test/templates` - Get available WATI templates
-- `POST /api/test/test-template` - Test template message sending
+### Public
+- `GET /api/public/invoices/:token` - Get invoice by public token (no auth required)
 
 ## Usage
 
@@ -175,16 +139,17 @@ wati_implementation/
 2. **Create an Invoice**: Navigate to Invoices → Create Invoice
    - Select a customer
    - Add invoice items (description, quantity, price)
-   - Click "Create Invoice & Send WhatsApp"
+   - Click "Create Invoice"
    - The system will:
      - Generate the invoice
      - Create a PDF
-     - Send WhatsApp template message to customer
-     - Track message status
+     - Generate a public URL for sharing
 
 3. **View Invoice**: Click on any invoice to view details and download PDF
 
-4. **Check WhatsApp Status**: View message delivery status in invoice details
+4. **Share Invoice**: Copy the public URL from invoice details and share with customers
+   - Customers can access the invoice without login
+   - Public URL format: `{FRONTEND_URL}/public/invoices/{token}`
 
 ## Development
 
@@ -206,26 +171,34 @@ npm run build      # Build for production
 ## Environment Variables
 
 ### Required
-- `DATABASE_URL` - Database connection string
-- `WATI_API_ENDPOINT` - WATI API endpoint URL
-- `WATI_API_TOKEN` - WATI API authentication token
-- `WATI_WHATSAPP_NUMBER` - WhatsApp number for sending messages
-- `WATI_CHANNEL_PHONE_NUMBER` - Channel phone number
+- `DATABASE_URL` - Database connection string (SQLite for dev, PostgreSQL for production)
 
 ### Optional
 - `PORT` - Server port (default: 3000)
 - `NODE_ENV` - Environment (development/production/test)
-- `BASE_URL` - Base URL for PDF generation
-- `WATI_INVOICE_TEMPLATE_NAME` - Template name for invoice notifications
-- `WATI_TEST_PDF_URL` - Test PDF URL (for development)
+- `BASE_URL` - Backend base URL
+- `FRONTEND_URL` - Frontend base URL (for public invoice links)
+
+## Deployment
+
+### Railway Deployment
+
+1. Push code to GitHub
+2. Create Railway project and deploy from GitHub
+3. Set Root Directory to `backend`
+4. Set Builder to `Dockerfile`
+5. Add PostgreSQL database
+6. Configure environment variables
+7. Deploy frontend separately (Vercel recommended)
+
+See deployment files in the project for detailed instructions.
 
 ## Troubleshooting
 
-1. **WATI API Errors**: Check your API token and endpoint URL in `.env`
-2. **Database Issues**: Run `npm run prisma:migrate` to reset database
-3. **PDF Generation**: Ensure `uploads/invoices` directory has write permissions
-4. **Template Not Found**: Verify template name matches `WATI_INVOICE_TEMPLATE_NAME` and template is approved
-5. **PDF URL Issues**: For localhost development, use `WATI_TEST_PDF_URL` with a publicly accessible PDF URL
+1. **Database Issues**: Run `npm run prisma:migrate` to reset database
+2. **PDF Generation**: Ensure `uploads/invoices` directory has write permissions
+3. **Public URLs Not Working**: Verify `FRONTEND_URL` is set correctly in environment variables
+4. **CORS Errors**: Check that `FRONTEND_URL` in backend matches your frontend domain
 
 ## License
 

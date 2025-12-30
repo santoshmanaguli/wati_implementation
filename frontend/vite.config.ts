@@ -7,8 +7,15 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'https://watiimplementation-production.up.railway.app',
         changeOrigin: true,
+        secure: true,
+      },
+      '/api/public': {
+        target: 'https://watiimplementation-production.up.railway.app',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
   },

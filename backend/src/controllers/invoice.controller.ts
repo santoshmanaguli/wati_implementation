@@ -39,7 +39,18 @@ const invoiceController = {
         res.status(404).json({ error: 'Invoice not found' });
         return;
       }
-      res.json(invoice);
+
+      const port = process.env.PORT || '3000';
+      const backendUrl = process.env.BASE_URL || `http://localhost:${port}`;
+      // Public URL points to backend API endpoint (works without frontend)
+      const publicUrl = invoice.publicToken ? `${backendUrl}/api/public/invoices/${invoice.publicToken}` : null;
+      const pdfUrl = `${backendUrl}/api/invoices/${invoice.id}/pdf`;
+
+      res.json({
+        ...invoice,
+        publicUrl,
+        pdfUrl,
+      });
     } catch (error) {
       res.status(500).json({ error: 'Failed to get invoice' });
     }
@@ -48,7 +59,17 @@ const invoiceController = {
   async list(req: Request, res: Response) {
     try {
       const invoices = await invoiceService.listInvoices();
-      res.json(invoices);
+      const port = process.env.PORT || '3000';
+      const backendUrl = process.env.BASE_URL || `http://localhost:${port}`;
+      
+      const invoicesWithUrls = invoices.map((invoice) => ({
+        ...invoice,
+        // Public URL points to backend API endpoint (works without frontend)
+        publicUrl: invoice.publicToken ? `${backendUrl}/api/public/invoices/${invoice.publicToken}` : null,
+        pdfUrl: `${backendUrl}/api/invoices/${invoice.id}/pdf`,
+      }));
+
+      res.json(invoicesWithUrls);
     } catch (error) {
       res.status(500).json({ error: 'Failed to list invoices' });
     }
@@ -74,6 +95,27 @@ const invoiceController = {
       fs.createReadStream(invoice.pdfPath).pipe(res);
     } catch (error) {
       res.status(500).json({ error: 'Failed to get PDF' });
+    }
+  },
+
+  async getByPublicToken(req: Request, res: Response) {
+    try {
+      const { token } = req.params;
+      const invoice = await invoiceService.getInvoiceByPublicToken(token);
+      
+      if (!invoice) {
+        res.status(404).json({ error: 'Invoice not found' });
+        return;
+      }
+
+      const port = process.env.PORT || '3000';
+      const backendUrl = process.env.BASE_URL || `http://localhost:${port}`;
+      const pdfUrl = `${backendUrl}/api/invoices/${invoice.id}/pdf`;
+
+      // Redirect to PDF instead of returning JSON
+      res.redirect(pdfUrl);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to get invoice' });
     }
   },
 };

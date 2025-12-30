@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+// Use production backend URL by default
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://watiimplementation-production.up.railway.app/api';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -31,15 +34,11 @@ export interface Invoice {
   totalAmount: number;
   status: string;
   pdfPath?: string;
+  publicToken?: string;
+  publicUrl?: string;
+  pdfUrl?: string;
   items: InvoiceItem[];
   createdAt: string;
-  watiMessages?: Array<{
-    id: string;
-    status: string;
-    sentAt?: string;
-    deliveredAt?: string;
-    error?: string;
-  }>;
 }
 
 export const customerApi = {

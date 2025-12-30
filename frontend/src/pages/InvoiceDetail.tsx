@@ -44,6 +44,13 @@ export default function InvoiceDetail() {
     }
   };
 
+  const handleCopyPublicUrl = () => {
+    if (invoice?.publicUrl) {
+      navigator.clipboard.writeText(invoice.publicUrl);
+      alert('Public URL copied to clipboard!');
+    }
+  };
+
   if (loading) {
     return <div className="text-center py-12 text-gray-900 dark:text-gray-100">Loading...</div>;
   }
@@ -57,6 +64,14 @@ export default function InvoiceDetail() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Invoice Details</h1>
         <div className="flex space-x-4">
+          {invoice.publicUrl && (
+            <button
+              onClick={handleCopyPublicUrl}
+              className="bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
+            >
+              Copy Public URL
+            </button>
+          )}
           <button
             onClick={handleDownloadPDF}
             className="bg-green-600 dark:bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-700 dark:hover:bg-green-600"
@@ -91,6 +106,29 @@ export default function InvoiceDetail() {
           {invoice.customer.phone && <p className="text-gray-600 dark:text-gray-400">{invoice.customer.phone}</p>}
           <p className="text-gray-600 dark:text-gray-400">WhatsApp: {invoice.customer.whatsappNumber}</p>
         </div>
+
+        {invoice.publicUrl && (
+          <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <h3 className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">Public Invoice URL</h3>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                readOnly
+                value={invoice.publicUrl}
+                className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-blue-300 dark:border-blue-700 rounded-lg text-sm text-gray-900 dark:text-gray-100"
+              />
+              <button
+                onClick={handleCopyPublicUrl}
+                className="bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 text-sm"
+              >
+                Copy
+              </button>
+            </div>
+            <p className="text-xs text-blue-700 dark:text-blue-400 mt-2">
+              Share this URL with your customer to allow them to view the invoice online.
+            </p>
+          </div>
+        )}
 
         <div className="mb-6">
           <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">Items</h3>
@@ -134,42 +172,6 @@ export default function InvoiceDetail() {
         </div>
       </div>
 
-      {invoice.watiMessages && invoice.watiMessages.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">WhatsApp Message Status</h3>
-          {invoice.watiMessages.map((message) => (
-            <div key={message.id} className="space-y-2">
-              <div className="flex items-center space-x-4">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Status:</span>
-                <span
-                  className={`px-3 py-1 text-sm font-semibold rounded-full ${
-                    message.status === 'sent' || message.status === 'delivered'
-                      ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
-                      : message.status === 'failed'
-                      ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
-                      : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200'
-                  }`}
-                >
-                  {message.status}
-                </span>
-              </div>
-              {message.sentAt && (
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  Sent at: {new Date(message.sentAt).toLocaleString()}
-                </div>
-              )}
-              {message.deliveredAt && (
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  Delivered at: {new Date(message.deliveredAt).toLocaleString()}
-                </div>
-              )}
-              {message.error && (
-                <div className="text-sm text-red-600 dark:text-red-400">Error: {message.error}</div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

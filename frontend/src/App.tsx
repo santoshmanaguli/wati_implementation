@@ -6,6 +6,7 @@ import CustomerForm from './pages/CustomerForm';
 import Invoices from './pages/Invoices';
 import InvoiceForm from './pages/InvoiceForm';
 import InvoiceDetail from './pages/InvoiceDetail';
+import PublicInvoiceView from './pages/PublicInvoiceView';
 import Dashboard from './pages/Dashboard';
 
 function App() {
@@ -21,7 +22,7 @@ function App() {
                     to="/"
                     className="flex items-center px-4 text-xl font-bold text-blue-600 dark:text-blue-400"
                   >
-                    WATI Invoice System
+                    Invoice Management System
                   </Link>
                   <div className="flex space-x-4 ml-8">
                     <Link
@@ -53,6 +54,7 @@ function App() {
 
           <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
             <Routes>
+              <Route path="/public/invoices/:token" element={<PublicInvoiceView />} />
               <Route path="/" element={<Dashboard />} />
               <Route path="/customers" element={<Customers />} />
               <Route path="/customers/new" element={<CustomerForm />} />

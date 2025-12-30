@@ -52,8 +52,16 @@ export default function InvoiceForm() {
 
     try {
       const response = await invoiceApi.create(formData);
-      alert('Invoice created successfully! WhatsApp message sent to customer.');
-      navigate(`/invoices/${response.data.id}`);
+      const invoice = response.data;
+      
+      if (invoice.publicUrl) {
+        const message = `Invoice created successfully!\n\nPublic URL:\n${invoice.publicUrl}\n\nThis URL can be shared with the customer to view the invoice.`;
+        alert(message);
+      } else {
+        alert('Invoice created successfully!');
+      }
+      
+      navigate(`/invoices/${invoice.id}`);
     } catch (error: any) {
       console.error('Failed to create invoice:', error);
       alert(error.response?.data?.error || 'Failed to create invoice');
@@ -172,7 +180,7 @@ export default function InvoiceForm() {
             disabled={loading || !formData.customerId}
             className="bg-blue-600 dark:bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-50"
           >
-            {loading ? 'Creating...' : 'Create Invoice & Send WhatsApp'}
+            {loading ? 'Creating...' : 'Create Invoice'}
           </button>
           <button
             type="button"

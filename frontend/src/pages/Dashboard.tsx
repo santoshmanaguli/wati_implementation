@@ -82,9 +82,6 @@ export default function Dashboard() {
                   Amount
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
                   Date
                 </th>
               </tr>
@@ -102,20 +99,6 @@ export default function Dashboard() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{invoice.customer.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">₹{invoice.totalAmount.toFixed(2)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        invoice.watiMessages?.[0]?.status === 'sent' ||
-                        invoice.watiMessages?.[0]?.status === 'delivered'
-                          ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
-                          : invoice.watiMessages?.[0]?.status === 'failed'
-                          ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
-                          : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200'
-                      }`}
-                    >
-                      {invoice.watiMessages?.[0]?.status || 'pending'}
-                    </span>
-                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {new Date(invoice.createdAt).toLocaleDateString()}
                   </td>
